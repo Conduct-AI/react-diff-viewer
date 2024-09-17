@@ -64,6 +64,11 @@ export interface ReactDiffViewerProps {
     additionalPrefix: LineNumberPrefix;
     styles: ReactDiffViewerStyles;
   }) => ReactElement;
+  // render row gutter
+  renderRowGutter?: (
+    lineInfromation: LineInformation,
+    styles: ReactDiffViewerStyles
+  ) => ReactElement;
   // Array of line ids to highlight lines.
   highlightLines?: string[];
   // Style overrides.
@@ -385,6 +390,7 @@ class DiffViewer extends React.Component<
     index: number,
   ): ReactElement => {
     let content;
+    const lineInformation = {left, right}
     if (left.type === DiffType.REMOVED && right.type === DiffType.ADDED) {
       return (
         <React.Fragment key={index}>
@@ -440,9 +446,17 @@ class DiffViewer extends React.Component<
     }
 
     return (
-      <tr key={index} className={this.styles.line}>
-        {content}
-      </tr>
+      <>
+        <tr key={index} className={this.styles.line}>
+          {content}
+        </tr>
+        {this.props.renderRowGutter
+          ? this.props.renderRowGutter(
+            lineInformation,
+            this.styles,
+            )
+          : null}
+      </>
     );
   };
 
